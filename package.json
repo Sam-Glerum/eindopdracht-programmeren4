@@ -9,10 +9,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.2",
     "chai": "^4.1.2",
     "chai-http": "^4.0.0",
     "express": "^4.16.3",
     "mocha": "^5.1.1",
+    "mysql": "^2.15.0",
     "nodemon": "^1.17.4"
+  },
+  "devDependencies": {
+    "dotenv": "^5.0.1"
   }
 }
