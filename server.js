@@ -3,18 +3,28 @@ let server = express();
 
 let port = process.env.PORT || config.webPort;
 
+/* Login and Registration */
 
 // Login endpoint
-server.get('/login', (req, res) => {
+server.post('/login', (req, res) => {
+    let loginInfo = req.body;
+    let query = {
+        sql: ""
+    }
+
     res.status(200);
     // ToDo: Logica voor inloggen implementeren
 });
 
 // Registration endpoint
-server.get('/register', (req, res) => {
+server.post('/register', (req, res) => {
     res.status(200);
     // ToDo: Logica voor registreren implementeren.
 });
+
+/* StudentHouse endpoints */
+
+
 
 
 
