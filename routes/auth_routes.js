@@ -34,7 +34,6 @@ router.post('/login', (req, res, next) => {
                     "token": auth.encodeToken(userName),
                     "username": userName
                 });
-                console.log("testing");
             }
         }
     });
