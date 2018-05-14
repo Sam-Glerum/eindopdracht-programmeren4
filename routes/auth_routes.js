@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
+const auth = require('../auth/authentication');
 let bodyparser = require('body-parser');
 
 router.use(bodyparser.urlencoded({
@@ -28,6 +29,11 @@ router.post('/login', (req, res, next) => {
             userName = rows[0].Email;
             userPW = rows[0].Password;
             if (userName === loginParameters.email && userPW === loginParameters.password) {
+                res.status(200);
+                res.json({
+                    "token": auth.encodeToken(userName),
+                    "username": userName
+                });
                 console.log("testing");
             }
         }
