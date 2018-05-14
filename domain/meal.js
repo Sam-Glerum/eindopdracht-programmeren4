@@ -1,13 +1,78 @@
 class Meal {
     constructor(name, description, ingredients, allergy, price, userId, studentHouseId) {
-        this.id = 0;
-        this.name = name;
-        this.description = description;
-        this.ingredients = ingredients;
-        this.allergy = allergy;
-        this.price = price;
-        this.userId = userId;
-        this.studentHouseId = studentHouseId;
+        this._id = 0;
         this.owner = userId;
+        this._name = name;
+        this._description = description;
+        this._ingredients = ingredients;
+        this._allergy = allergy;
+        this._price = price;
+        this._userId = userId;
+        this._studentHouseId = studentHouseId;
+    }
+
+
+    get name() {
+        return this._name;
+    }
+
+    set name(value) {
+        this._name = value;
+    }
+
+    get description() {
+        return this._description;
+    }
+
+    set description(value) {
+        this._description = value;
+    }
+
+    get ingredients() {
+        return this._ingredients;
+    }
+
+    set ingredients(value) {
+        this._ingredients = value;
+    }
+
+    get allergy() {
+        return this._allergy;
+    }
+
+    set allergy(value) {
+        this._allergy = value;
+    }
+
+    get price() {
+        return this._price;
+    }
+
+    set price(value) {
+        this._price = value;
+    }
+
+    get userId() {
+        return this._userId;
+    }
+
+    set userId(value) {
+        this._userId = value;
+    }
+
+    get studentHouseId() {
+        return this._studentHouseId;
+    }
+
+    set studentHouseId(value) {
+        this._studentHouseId = value;
+    }
+
+    get id() {
+        return this._id;
+    }
+
+    set id(value) {
+        this._id = value;
     }
 }
