@@ -7,8 +7,10 @@ class Meal {
         this._ingredients = ingredients;
         this._allergy = allergy;
         this._price = price;
-        this._userId = userId;
         this._studentHouseId = studentHouseId;
+
+        var participantArray = [];
+        this._participantArray.push(userId);
     }
 
 
@@ -52,14 +54,6 @@ class Meal {
         this._price = value;
     }
 
-    get userId() {
-        return this._userId;
-    }
-
-    set userId(value) {
-        this._userId = value;
-    }
-
     get studentHouseId() {
         return this._studentHouseId;
     }
@@ -74,5 +68,14 @@ class Meal {
 
     set id(value) {
         this._id = value;
+    }
+
+
+    get participantArray() {
+        return this._participantArray;
+    }
+
+    set participantArray(value) {
+        this._participantArray = value;
     }
 }
