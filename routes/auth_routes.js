@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const auth = require('../auth/authentication');
-let bodyparser = require('body-parser');
+const bodyparser = require('body-parser');
 
 router.use(bodyparser.urlencoded({
     extended: true
