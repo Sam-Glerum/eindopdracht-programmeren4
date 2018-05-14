@@ -7,5 +7,6 @@ class StudentHouse {
         this.postCode = postCode;
         this.city = city;
         this.userId = userId;
+        this.owner = userId;
     }
 }

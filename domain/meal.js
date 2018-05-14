@@ -8,5 +8,6 @@ class Meal {
         this.price = price;
         this.userId = userId;
         this.studentHouseId = studentHouseId;
+        this.owner = userId;
     }
 }
