@@ -1,5 +1,5 @@
 class StudentHouse {
-    constructor(id, name, street, houseNumber, postCode, city, userId) {
+    constructor(name, street, houseNumber, postCode, city, userId) {
         this.id = id;
         this.name = name;
         this.street = street;
