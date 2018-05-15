@@ -173,6 +173,12 @@ router.put('/studentenhuis/:ID', authController.validateToken, (req, res, next) 
 router.delete('/studentenhuis/:ID', authController.validateToken, (req, res, next) => {
     let studentHouseID = req.params.ID;
 
+    let token = req.token;
+
+    let studenthouseIDquery = {
+        sql: 'SELECT * FROM studentenhuis WHERE ID =?',
+        values: [studentHouseID]
+    };
     let query = {
         sql: "DELETE FROM studentenhuis WHERE ID=?",
         values: [studentHouseID]
@@ -181,13 +187,32 @@ router.delete('/studentenhuis/:ID', authController.validateToken, (req, res, nex
     console.log('Delete Query: ' + query.sql);
 
     res.contentType('application/json');
-    db.query(query, (error, rows, fields) => {
+
+    db.query(studenthouseIDquery, (error, rows, fields) => {
         if (error) {
             res.status(400).json(error);
+        } else if (rows.length < 1) {
+            res.status(404);
+            res.json({
+                "message": "Niet gevonden (huisID bestaat niet)",
+                "code": 404,
+                "datetime": moment()
+            })
         } else {
-            res.status(200).json(rows);
+            db.query(query, (error, rows, fields) => {
+                if (error) {
+                    res.status(409);
+                    res.json({
+                        "message": "Conflict (gebruiker mag deze data niet verwijderen",
+                        "code": 409,
+                        "datetime": moment()
+                    })
+                } else {
+                    res.status(200).json({});
+                }
+            })
         }
-    })
+    });
 });
 
 module.exports = router;
