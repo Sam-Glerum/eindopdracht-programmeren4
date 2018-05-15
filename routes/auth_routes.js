@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const auth = require('../auth/authentication');
-let bodyparser = require('body-parser');
+const bodyparser = require('body-parser');
 
 router.use(bodyparser.urlencoded({
     extended: true
@@ -16,9 +16,10 @@ router.post('/login', (req, res, next) => {
 
     let userName = '';
     let userPW = '';
+    let userId = 0;
 
     let query = {
-        sql: 'SELECT Email, Password FROM user WHERE Email = "' + loginParameters.email + '"',
+        sql: 'SELECT ID, Email, Password FROM user WHERE Email = "' + loginParameters.email + '"',
     };
 
     db.query(query, (error, rows, fields) => {
@@ -26,13 +27,15 @@ router.post('/login', (req, res, next) => {
             res.status(400);
             res.json(error);
         } else {
+            userId = rows[0].ID;
             userName = rows[0].Email;
             userPW = rows[0].Password;
             if (userName === loginParameters.email && userPW === loginParameters.password) {
                 res.status(200);
                 res.json({
                     "token": auth.encodeToken(userName),
-                    "username": userName
+                    "username": userName,
+                    "ID": userId
                 });
             }
         }
