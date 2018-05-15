@@ -15,7 +15,7 @@ router.all('/studentenhuis', authController.validateToken, (req, res, next) => {
     next();
 });
 
-router.get('/studentenhuis', (req, res) => {
+router.get('/studentenhuis', authController.validateToken, (req, res, next) => {
     res.contentType('application/json');
     console.log("GET api/studentenhuis called");
 
@@ -28,7 +28,7 @@ router.get('/studentenhuis', (req, res) => {
     })
 });
 
-router.get('/studentenhuis/:ID', (req, res, next) => {
+router.get('/studentenhuis/:ID', authController.validateToken, (req, res, next) => {
     res.contentType('application/json');
     let houseId = req.params.ID;
     console.log('GET api/studentenhuis/:id called');
@@ -43,7 +43,7 @@ router.get('/studentenhuis/:ID', (req, res, next) => {
     });
 });
 
-router.post('/studentenhuis', (req, res, next) => {
+router.post('/studentenhuis', authController.validateToken, (req, res, next) => {
     res.contentType('application/json');
     let studentenhuis = req.body;
     let token = req.token;
@@ -59,7 +59,7 @@ router.post('/studentenhuis', (req, res, next) => {
 
     db.query(userQuery, (error, rows, fields) => {
         if (error) {
-            console.log(error);
+            res.status(400).json(error);
         } else {
             userID = rows[0].ID;
             console.log(userID);
@@ -78,11 +78,54 @@ router.post('/studentenhuis', (req, res, next) => {
                     res.json(error);
                 } else {
                     res.status(200);
+                    console.log("POST TETST!");
                     res.json(rows);
                 }
             });
         }
     });
+});
+
+router.put('/studentenhuis/:ID', authController.validateToken, (req, res, next) => {
+    let studentHouse = req.body;
+    let studentHouseID = req.params.ID;
+
+    let query = {
+        sql: "UPDATE studentenhuis SET Naam=?, adres=? WHERE ID=?",
+        values: [studentHouse.naam, studentHouse.adres, studentHouseID]
+    };
+
+    console.dir(studentHouse);
+    console.log('Studenthouse query: ' + query.sql);
+
+    res.contentType('application/json');
+    db.query(query, (error, rows, fields) => {
+        if (error) {
+            res.status(400).json(error);
+        } else {
+            res.status(200).json(rows);
+        }
+    })
+});
+
+router.delete('/studentenhuis/:ID', authController.validateToken, (req, res, next) => {
+    let studentHouseID = req.params.ID;
+
+    let query = {
+        sql: "DELETE FROM studentenhuis WHERE ID=?",
+        values: [studentHouseID]
+    };
+
+    console.log('Delete Query: ' + query.sql);
+
+    res.contentType('application/json');
+    db.query(query, (error, rows, fields) => {
+        if (error) {
+            res.status(400).json(error);
+        } else {
+            res.status(200).json(rows);
+        }
+    })
 });
 
 module.exports = router;
