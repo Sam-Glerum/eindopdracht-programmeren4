@@ -35,7 +35,7 @@ describe('Registration', () => {
                 email.equals('test@test.com')
                 const password = response.password
                 password.equals("testpassword")
-            })
+            }))
         //
         // Hier schrijf je jouw testcase.
         //
@@ -43,10 +43,11 @@ describe('Registration', () => {
         // Tip: deze test levert een token op. Dat token gebruik je in 
         // andere testcases voor beveiligde routes door het hier te exporteren
         // en in andere testcases te importeren via require.
-        // validToken = res.body.token
-        // module.exports = {
-        //     token: validToken
-        // }
+        validToken = res.body.token
+        module.exports = {
+            token: validToken
+        }
+
         done()
     })
 
@@ -103,10 +104,27 @@ describe('Registration', () => {
 
 describe('Login', () => {
 
+    require('validToken');
     it('should return a token when providing valid information', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
+    //     chai.request(server)
+    //         .post('api/login')
+    //         .send({
+    //             "user": {
+    //                 "email": "test@test.com",
+    //                 "password": "testpassword"
+    //             }
+    //         })
+    //         .end((err, res => {
+    //             res.should.have.status(200)
+    //             res.body.should.be.a('object')
+    //
+    //             const response = res.body
+    //             const user = response.user
+    //             const email = user.email
+    //             email.equals('test@test.com')
+    //             const password = user.password
+    //             password.equals("testpassword")
+    //         }))
         done()
     })
 
