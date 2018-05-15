@@ -187,7 +187,91 @@ router.put('/studentenhuis/:shId/maaltijd/:maId', authController.validateToken, 
 });
 
 router.delete('/studentenhuis/:shId/maaltijd/:maId', authController.validateToken, (req, res, next) => {
-    
+    res.contentType('application/json');
+    let studentHouseId = req.params.shId;
+    let mealId = req.params.maId;
+
+    console.log("shID: " + studentHouseId);
+    console.log("maID: " + mealId);
+
+    let maaltijd = req.body;
+    let token = req.token;
+
+    let payload = jwt.decode(token, config.secretkey);
+    let username = payload.sub;
+
+    let userQuery = {
+        sql: 'SELECT ID FROM user WHERE Email = "' + username + '"'
+    };
+
+    let userID = 0;
+
+    db.query(userQuery, (error, rows, fields) => {
+        if (error) {
+            res.status(400).json(error);
+        } else {
+            userID = rows[0].ID;
+            console.log("userID: " + userID);
+        }
+
+
+        let ownerOfMealQuery = {
+            sql: 'SELECT UserID FROM Maaltijd WHERE StudentenhuisID = ' + studentHouseId + ' AND ID = ' + mealId + '',
+        };
+
+        console.log(ownerOfMealQuery.sql);
+
+        let ownerOfMealID = 0;
+
+        db.query(ownerOfMealQuery, (error, rows, fields) => {
+            if (error) {
+                res.status(400).json(error);
+
+            } else {
+
+                if (rows[0] === undefined) {
+                    res.status(404);
+                    res.json({
+                        message: 'Niet gevonden (huisId of maaltijdId bestaat niet)',
+                        code: '404',
+                        datetime: moment()
+                    });
+
+                } else {
+                    ownerOfMealID = rows[0].UserID;
+                    console.log("ownerOfMealID: " + ownerOfMealID);
+
+                    if (userID === ownerOfMealID) {
+                        let query = {
+                            sql: 'DELETE FROM `maaltijd` WHERE ID = ' + mealId + '',
+                        };
+
+                        console.log("Maaltijd DELETE query: " + query.sql);
+
+                        db.query(query, (error, rows, fields) => {
+                            if (error) {
+                                res.status(400);
+                                res.json(error);
+                            } else {
+                                res.status(200);
+                                console.log("DELETE successful!");
+                                res.json(rows);
+                            }
+                        });
+
+                    } else {
+                        console.log("ID of owner and visitor are not equal!");
+                        res.status(409);
+                        res.json({
+                            message: 'ID of owner and visitor are not equal!',
+                            code: '409',
+                            datetime: moment()
+                        })
+                    }
+                }
+            }
+        });
+    });
 });
 
 module.exports = router;
