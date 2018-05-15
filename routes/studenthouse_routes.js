@@ -85,4 +85,26 @@ router.post('/studentenhuis', (req, res, next) => {
     });
 });
 
+router.put('/studentenhuis/:ID', (req, res, next) => {
+    let studentHouse = req.body;
+    let studentHouseID = req.params.ID;
+
+    let query = {
+        sql: "UPDATE studentenhuis SET Naam=?, adres=? WHERE ID=?",
+        values: [studentHouse.naam, studentHouse.adres, studentHouseID]
+    };
+
+    console.dir(studentHouse);
+    console.log('Studenthouse query: ' + query.sql);
+
+    res.contentType('application/json');
+    db.query(query, (error, rows, fields) => {
+        if (error) {
+            res.status(400).json(error);
+        } else {
+            res.status(200).json(rows);
+        }
+    })
+});
+
 module.exports = router;
