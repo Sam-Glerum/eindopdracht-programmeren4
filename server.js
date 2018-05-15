@@ -13,6 +13,7 @@ server.use(bodyparser.urlencoded({
 server.use('/api', require('./routes/auth_routes'));
 server.use('/api', require('./routes/studenthouse_routes'));
 server.use('/api', require('./routes/meal_routes'));
+server.use('/api', require('./routes/participant_routes'));
 
 server.get('*', (req, res) => {
     res.status(404);
