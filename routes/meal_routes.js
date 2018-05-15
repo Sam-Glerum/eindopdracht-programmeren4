@@ -83,7 +83,17 @@ router.post('/studentenhuis/:shId/maaltijd', authController.validateToken, (req,
 
 
             db.query(query, (error, rows, fields) => {
-                if (error) {
+                if (typeof maaltijd.naam === "undefined" || typeof maaltijd.beschrijving === "undefined" ||
+                    typeof maaltijd.ingredienten === "undefined" || typeof maaltijd.allergie === "undefined" ||
+                    typeof maaltijd.prijs === "undefined") {
+                    res.status(412);
+                    res.json({
+                        "message": "Een of meer properties in de request body ontbreken of zijn foutief",
+                        "code": 412,
+                        "datetime": moment()
+                    });
+
+                } else if (error) {
                     res.status(400);
                     res.json(error);
                 } else {
