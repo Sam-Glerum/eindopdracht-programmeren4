@@ -81,6 +81,16 @@ router.post('/studentenhuis/:shId/maaltijd', authController.validateToken, (req,
             };
             console.log('maaltijd POST query: ' + query.sql);
 
+            if (query.sql.includes("?")) {
+                console.log("Properties in request body are missing!");
+                res.status(412);
+                res.json({
+                    message: 'Een of meer properties in de request body ontbreken of zijn foutief',
+                    code: '412',
+                    datetime: moment()
+                });
+            }
+
 
             db.query(query, (error, rows, fields) => {
                 if (error) {
