@@ -70,7 +70,6 @@ router.post('/studentenhuis', authController.validateToken, (req, res, next) => 
             res.status(400).json(error);
         } else {
             userID = rows[0].ID;
-            console.log(userID);
 
             let query = {
                 sql: 'INSERT INTO studentenhuis (Naam, Adres, UserID) VALUES (?, ?, ?)',
@@ -82,11 +81,21 @@ router.post('/studentenhuis', authController.validateToken, (req, res, next) => 
 
             db.query(query, (error, rows, fields) => {
                 if (error) {
-                    res.status(400);
-                    res.json(error);
+                    res.status(412);
+                    res.json({
+                        "message": "Een of meer properties in de request body ontbreken of zijn foutief",
+                        "code": 412,
+                        "datetime": moment()
+                    });
                 } else {
                     res.status(200);
-                    res.json(rows);
+                    res.json({
+                        "ID": userID,
+                        "naam": studentenhuis.naam,
+                        "adres": studentenhuis.adres,
+                        "contact": userID,
+                        "email": username
+                    });
                 }
             });
         }
