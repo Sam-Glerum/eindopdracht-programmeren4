@@ -44,8 +44,10 @@ router.get('/studentenhuis/:shId/maaltijd', (req, res, next) => {
         } else if (rows.length == 0) {
             res.status(404);
             res.json({
-                "msg": "Requested house id not found!"
-            })
+                "message": "Niet gevonden (huisId bestaat niet)",
+                "code": 404,
+                "datetime": moment()
+            });
         } else {
             res.status(200).json(rows);
         }
