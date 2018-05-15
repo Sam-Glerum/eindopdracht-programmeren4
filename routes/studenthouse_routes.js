@@ -26,6 +26,21 @@ router.get('/studentenhuis', (req, res) => {
     })
 });
 
+router.get('/studentenhuis/:ID', (req, res, next) => {
+    res.contentType('application/json');
+    let houseId = req.params.ID;
+    console.log('GET api/studentenhuis/:id called');
+
+    db.query('SELECT * FROM studentenhuis where ID = ' + houseId, (error, rows, fields) => {
+        console.log(rows);
+        if (error) {
+            res.status(400).json(error);
+        } else {
+            res.status(200).json(rows);
+        }
+    });
+});
+
 router.post('/studentenhuis', (req, res, next) => {
     let studentenhuis = req.body;
     let token = req.token;
