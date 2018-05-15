@@ -6,6 +6,7 @@ const config = require('../config/config');
 const authController = require('../auth/auth_controller');
 const bodyparser = require('body-parser');
 const jwt = require('jwt-simple');
+const moment = require('moment');
 
 router.use(bodyparser.urlencoded({
     extended: true
@@ -37,6 +38,13 @@ router.get('/studentenhuis/:ID', authController.validateToken, (req, res, next) 
         console.log(rows);
         if (error) {
             res.status(400).json(error);
+        } else if (rows.length < 1) {
+            res.status(404);
+            res.json({
+                "message": "Niet gevonden (huisID bestaat niet)",
+                "code": 404,
+                "datetime": moment()
+            })
         } else {
             res.status(200).json(rows);
         }
