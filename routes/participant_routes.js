@@ -58,7 +58,12 @@ router.post('/studentenhuis/:shID/maaltijd/:maID/deelnemers', authController.val
 
     db.query(userIDQuery, (error, rows, fields) => {
         if (error) {
-            res.status(400).json(error);
+            res.status(404);
+            res.json({
+                "message": "Niet gevonden (huisID of maaltijdID bestaat niet",
+                "code": 404,
+                "datetime": moment()
+            });
         } else {
             userID = rows[0].ID;
             console.log("USERID: " + userID);
@@ -69,7 +74,12 @@ router.post('/studentenhuis/:shID/maaltijd/:maID/deelnemers', authController.val
 
             db.query(query, (error, rows, fields) => {
                 if (error) {
-                    res.status(400).json(error);
+                    res.status(409)
+                    res.json({
+                        "message": "Conflict: Gebruiker is al aangemeld",
+                        "code": 409,
+                        "datetime": moment()
+                    });
                 } else {
                     res.status(200).json(rows);
                 }
