@@ -28,9 +28,10 @@ let validateToken = (req, res, next) => {
         const bearer = bearerHeader.split(" ");
         const bearerToken = bearer[1];
         req.token = bearerToken;
-        next();
+        next()
     } else {
         res.sendStatus(403);
+        next();
     }
 };
 module.exports = {

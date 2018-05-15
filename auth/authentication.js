@@ -23,6 +23,7 @@ let decodeToken = (token, callback) => {
             callback('Token has expired!', null);
         } else {
             callback(null, payload);
+            return payload.sub;
         }
     } catch (err) {
         callback(err, null);
