@@ -78,7 +78,7 @@ router.post('/studentenhuis/:shId/maaltijd', authController.validateToken, (req,
                 values: [maaltijd.naam, maaltijd.beschrijving, maaltijd.ingredienten, maaltijd.allergie, maaltijd.prijs, userID, studentHouseId],
                 timeout: 2000
             };
-            console.log('Studenthuis query: ' + query.sql);
+            console.log('maaltijd POST query: ' + query.sql);
 
 
             db.query(query, (error, rows, fields) => {
@@ -87,7 +87,7 @@ router.post('/studentenhuis/:shId/maaltijd', authController.validateToken, (req,
                     res.json(error);
                 } else {
                     res.status(200);
-                    console.log("POST TETST!");
+                    console.log("POST successful!");
                     res.json(rows);
                 }
             });
@@ -95,10 +95,14 @@ router.post('/studentenhuis/:shId/maaltijd', authController.validateToken, (req,
     });
 });
 
-router.put('/studentenhuis/:shId/maaltijd/:maId', (req, res, next) => {
+router.put('/studentenhuis/:shId/maaltijd/:maId', authController.validateToken, (req, res, next) => {
     res.contentType('application/json');
     let studentHouseId = req.params.shId;
     let mealId = req.params.maId;
+
+    console.log("shID: " + studentHouseId);
+    console.log("maID: " + mealId);
+
     let maaltijd = req.body;
     let token = req.token;
 
@@ -116,25 +120,53 @@ router.put('/studentenhuis/:shId/maaltijd/:maId', (req, res, next) => {
             res.status(400).json(error);
         } else {
             userID = rows[0].ID;
-            console.log(userID);
+            console.log("userID: " + userID);
         }
+
+
+        let ownerOfMealQuery = {
+            sql: 'SELECT UserID FROM Maaltijd WHERE StudentenhuisID = ' + studentHouseId + ' AND ID = ' + mealId + '',
+        };
+
+        console.log(ownerOfMealQuery.sql);
+
+        let ownerOfMealID = 0;
+
+        db.query(ownerOfMealQuery, (error, rows, fields) => {
+            if (error) {
+                res.status(400).json(error);
+
+            } else {
+                ownerOfMealID = rows[0].UserID;
+                console.log("ownerOfMealID: " + ownerOfMealID);
+
+                if (userID === ownerOfMealID) {
+                    let query = {
+                        sql: 'UPDATE `maaltijd` SET Naam=? , Beschrijving=? , Ingredienten=? , Allergie=? , Prijs=? WHERE ID = ? AND studentenhuisID = ? AND UserID = ?',
+                        values: [maaltijd.naam, maaltijd.beschrijving, maaltijd.ingredienten, maaltijd.allergie, maaltijd.prijs, mealId, studentHouseId, userID],
+                        timeout: 5000
+
+                    };
+
+                    console.log("Maaltijd PUT query: " + query.sql);
+
+                    db.query(query, (error, rows, fields) => {
+                        if (error) {
+                            res.status(400);
+                            res.json(error);
+                        } else {
+                            res.status(200);
+                            console.log("PUT successful!");
+                            res.json(rows);
+                        }
+                    });
+
+                } else {
+                    console.log("ID of owner and visitor are not equal!");
+                }
+            }
+        });
     });
-
-    let ownerOfMealQuery = {
-        sql: 'SELECT UserID FROM Maaltijd WHERE StudentenhuisID = ' + studentHouseId + ' AND ID = ' + mealId + ''
-    };
-
-    let ownerOfMealID = 0;
-
-    db.query(ownerOfMealQuery, (error, rows, fields) => {
-        if (error) {
-            res.status(400).json(error);
-        } else {
-            ownerOfMealID = rows[0].ID;
-            console.log(userID);
-        }
-    });
-
 });
 
 module.exports = router;
