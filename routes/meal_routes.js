@@ -186,4 +186,8 @@ router.put('/studentenhuis/:shId/maaltijd/:maId', authController.validateToken, 
     });
 });
 
+router.delete('/studentenhuis/:shId/maaltijd/:maId', authController.validateToken, (req, res, next) => {
+    
+});
+
 module.exports = router;
