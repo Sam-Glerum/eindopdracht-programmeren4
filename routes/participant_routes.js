@@ -68,8 +68,49 @@ router.post('/studentenhuis/:shID/maaltijd/:maID/deelnemers', authController.val
             })
         }
     });
+});
+
+router.delete('/studentenhuis/:shID/maaltijd/:maID/deelnemers', authController.validateToken, (req, res, next) => {
+    res.contentType('application/json');
+    let studentHouseID = req.params.shID;
+    let mealID = req.params.maID;
+    let token = req.token;
+
+    let payload = jwt.decode(token, config.secretkey);
+    let username = payload.sub;
+
+    let userQuery = {
+        sql: 'SELECT ID FROM user WHERE Email = "' + username + '"'
+    };
+
+    let userID = 0;
+
+    db.query(userQuery, (error, rows, fields) => {
+        if (error) {
+            res.status(400).json(error);
+        } else {
+            userID = rows[0].ID;
+            console.log(userID);
+
+            let query = {
+                sql: 'DELETE FROM deelnemers where UserID =?',
+                values: [userID],
+                timeout: 2000
+            };
+            console.log('Deelnemer DELETE query: ' + query.sql);
 
 
+            db.query(query, (error, rows, fields) => {
+                if (error) {
+                    res.status(400);
+                    res.json(error);
+                } else {
+                    res.status(200);
+                    res.json(rows);
+                }
+            });
+        }
+    });
 });
 
 module.exports = router;
