@@ -78,7 +78,6 @@ router.post('/studentenhuis', authController.validateToken, (req, res, next) => 
                     res.json(error);
                 } else {
                     res.status(200);
-                    console.log("POST TETST!");
                     res.json(rows);
                 }
             });
