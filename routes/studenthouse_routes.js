@@ -107,4 +107,24 @@ router.put('/studentenhuis/:ID', (req, res, next) => {
     })
 });
 
+router.delete('/studentenhuis/:ID', (req, res, next) => {
+    let studentHouseID = req.params.ID;
+
+    let query = {
+        sql: "DELETE FROM studentenhuis WHERE ID=?",
+        values: [studentHouseID]
+    }
+
+    console.log('Delete Query: ' + query.sql);
+
+    res.contentType('application/json');
+    db.query(query, (error, rows, fields) => {
+        if (error) {
+            res.status(400).json(error);
+        } else {
+            res.status(200).json(rows);
+        }
+    })
+});
+
 module.exports = router;
