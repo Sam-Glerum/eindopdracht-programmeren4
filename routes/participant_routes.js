@@ -6,6 +6,7 @@ const config = require('../config/config');
 const authController = require('../auth/auth_controller');
 const bodyparser = require('body-parser');
 const jwt = require('jwt-simple');
+const moment = require('moment');
 
 router.all('', (req, res, next) => {
     console.log('test');
@@ -22,11 +23,19 @@ router.get('/studentenhuis/:shID/maaltijd/:maID/deelnemers', authController.vali
 
     db.query(query, (error, rows, fields) => {
         if (error) {
-            console.log("test");
-            res.status(400).json(error);
-        } else if (rows.length < 1){
             res.status(404);
-            res.send("Niet gevonden (huisID of maaltijdID bestaat niet");
+            res.json({
+                "message": "Niet gevonden (huisId of maaltijdId bestaat niet)",
+                "code": 404,
+                "datetime": moment()
+            })
+        } else if (rows.length < 1) {
+            res.status(404);
+            res.json({
+                "message": "Niet gevonden (huisId of maaltijdId bestaat niet)",
+                "code": 404,
+                "datetime": moment()
+            })
         } else {
             res.status(200).json(rows);
         }
