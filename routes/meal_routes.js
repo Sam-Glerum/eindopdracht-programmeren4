@@ -95,4 +95,8 @@ router.post('/studentenhuis/:shId/maaltijd', authController.validateToken, (req,
     });
 });
 
+router.put('/studentenhuis/:shId/maaltijd/:maId', (req, res, next) => {
+
+});
+
 module.exports = router;
