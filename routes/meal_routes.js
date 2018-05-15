@@ -138,37 +138,48 @@ router.put('/studentenhuis/:shId/maaltijd/:maId', authController.validateToken, 
                 res.status(400).json(error);
 
             } else {
-                ownerOfMealID = rows[0].UserID;
-                console.log("ownerOfMealID: " + ownerOfMealID);
 
-                if (userID === ownerOfMealID) {
-                    let query = {
-                        sql: 'UPDATE `maaltijd` SET Naam=? , Beschrijving=? , Ingredienten=? , Allergie=? , Prijs=? WHERE ID = ? AND studentenhuisID = ? AND UserID = ?',
-                        values: [maaltijd.naam, maaltijd.beschrijving, maaltijd.ingredienten, maaltijd.allergie, maaltijd.prijs, mealId, studentHouseId, userID],
-                        timeout: 2000,
-                    };
-
-                    console.log("Maaltijd PUT query: " + query.sql);
-
-                    db.query(query, (error, rows, fields) => {
-                        if (error) {
-                            res.status(400);
-                            res.json(error);
-                        } else {
-                            res.status(200);
-                            console.log("PUT successful!");
-                            res.json(rows);
-                        }
+                if (rows[0] === undefined) {
+                    res.status(404);
+                    res.json({
+                        message: 'Niet gevonden (huisId of maaltijdId bestaat niet)',
+                        code: '404',
+                        datetime: moment()
                     });
 
                 } else {
-                    console.log("ID of owner and visitor are not equal!");
-                    res.status(409);
-                    res.json({
-                        message: 'ID of owner and visitor are not equal!',
-                        code: '409',
-                        datetime: moment()
-                    })
+                    ownerOfMealID = rows[0].UserID;
+                    console.log("ownerOfMealID: " + ownerOfMealID);
+
+                    if (userID === ownerOfMealID) {
+                        let query = {
+                            sql: 'UPDATE `maaltijd` SET Naam=? , Beschrijving=? , Ingredienten=? , Allergie=? , Prijs=? WHERE ID = ? AND studentenhuisID = ? AND UserID = ?',
+                            values: [maaltijd.naam, maaltijd.beschrijving, maaltijd.ingredienten, maaltijd.allergie, maaltijd.prijs, mealId, studentHouseId, userID],
+                            timeout: 2000,
+                        };
+
+                        console.log("Maaltijd PUT query: " + query.sql);
+
+                        db.query(query, (error, rows, fields) => {
+                            if (error) {
+                                res.status(400);
+                                res.json(error);
+                            } else {
+                                res.status(200);
+                                console.log("PUT successful!");
+                                res.json(rows);
+                            }
+                        });
+
+                    } else {
+                        console.log("ID of owner and visitor are not equal!");
+                        res.status(409);
+                        res.json({
+                            message: 'ID of owner and visitor are not equal!',
+                            code: '409',
+                            datetime: moment()
+                        })
+                    }
                 }
             }
         });
