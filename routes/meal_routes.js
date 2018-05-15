@@ -144,8 +144,7 @@ router.put('/studentenhuis/:shId/maaltijd/:maId', authController.validateToken, 
                     let query = {
                         sql: 'UPDATE `maaltijd` SET Naam=? , Beschrijving=? , Ingredienten=? , Allergie=? , Prijs=? WHERE ID = ? AND studentenhuisID = ? AND UserID = ?',
                         values: [maaltijd.naam, maaltijd.beschrijving, maaltijd.ingredienten, maaltijd.allergie, maaltijd.prijs, mealId, studentHouseId, userID],
-                        timeout: 5000
-
+                        timeout: 2000,
                     };
 
                     console.log("Maaltijd PUT query: " + query.sql);
@@ -163,6 +162,10 @@ router.put('/studentenhuis/:shId/maaltijd/:maId', authController.validateToken, 
 
                 } else {
                     console.log("ID of owner and visitor are not equal!");
+                    res.status(409);
+                    res.json({
+                        msg: 'ID of owner and visitor are not equal!',
+                    })
                 }
             }
         });
