@@ -161,9 +161,20 @@ router.put('/studentenhuis/:shId/maaltijd/:maId', authController.validateToken, 
                         console.log("Maaltijd PUT query: " + query.sql);
 
                         db.query(query, (error, rows, fields) => {
-                            if (error) {
+                            if (typeof maaltijd.naam === "undefined" || typeof maaltijd.beschrijving === "undefined" ||
+                                typeof maaltijd.ingredienten === "undefined" || typeof maaltijd.allergie === "undefined" ||
+                                typeof maaltijd.prijs === "undefined") {
+                                res.status(412);
+                                res.json({
+                                    "message": "Een of meer properties in de request body ontbreken of zijn foutief",
+                                    "code": 412,
+                                    "datetime": moment()
+                                });
+
+                            } else if (error) {
                                 res.status(400);
                                 res.json(error);
+
                             } else {
                                 res.status(200);
                                 console.log("PUT successful!");
