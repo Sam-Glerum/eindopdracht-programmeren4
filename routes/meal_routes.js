@@ -10,4 +10,20 @@ router.all('/studentenhuis/maaltijd', (req, res, next) => {
     // console.log("POST request to studentenhuis/" + /**+ studentHouseId */ + "/maaltijd")
 });
 
+router.get('/studentenhuis/:shId/maaltijd/:maId', (req, res, next) => {
+    let studentHouseId = req.params.shId;
+    let mealId = req.params.maId;
+    console.log("GET studentenhuis/" + studentHouseId +"/maaltijd/" + mealId);
+
+    db.query('SELECT * FROM maaltijd WHERE ID = ' + mealId + ' AND StudentenhuisID = ' + studentHouseId, (error, rows, fields) => {
+        console.log(rows);
+        if (error) {
+            res.status(400).json(error);
+        } else {
+            res.status(200).json(rows);
+        }
+    });
+
+});
+
 module.exports = router;
