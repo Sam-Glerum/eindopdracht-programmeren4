@@ -6,6 +6,7 @@ const config = require('../config/config');
 const authController = require('../auth/auth_controller');
 const bodyparser = require('body-parser');
 const jwt = require('jwt-simple');
+const moment = require('moment');
 
 router.all('/studentenhuis/maaltijd', (req, res, next) => {
     // let studentHouseId = req.param.shId;
@@ -164,7 +165,9 @@ router.put('/studentenhuis/:shId/maaltijd/:maId', authController.validateToken, 
                     console.log("ID of owner and visitor are not equal!");
                     res.status(409);
                     res.json({
-                        msg: 'ID of owner and visitor are not equal!',
+                        message: 'ID of owner and visitor are not equal!',
+                        code: '409',
+                        datetime: moment()
                     })
                 }
             }
