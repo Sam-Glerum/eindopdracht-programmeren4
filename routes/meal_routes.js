@@ -160,6 +160,16 @@ router.put('/studentenhuis/:shId/maaltijd/:maId', authController.validateToken, 
 
                         console.log("Maaltijd PUT query: " + query.sql);
 
+                        if (query.sql.includes("?")) {
+                            console.log("Properties in request body are missing!");
+                            res.status(412);
+                            res.json({
+                                message: 'Een of meer properties in de request body ontbreken of zijn foutief',
+                                code: '412',
+                                datetime: moment()
+                            });
+                        }
+
                         db.query(query, (error, rows, fields) => {
                             if (error) {
                                 res.status(400);
