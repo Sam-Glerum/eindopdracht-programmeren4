@@ -16,7 +16,7 @@ router.get('/studentenhuis/:shID/maaltijd/:maID/deelnemers', authController.vali
    let mealID = req.params.maID;
 
    let query = ({
-       sql: 'SELECT UserID FROM maaltijd WHERE StudentenhuisID =? AND ID =?',
+       sql: 'SELECT UserID FROM deelnemers WHERE StudentenhuisID =? AND MaaltijdID =?',
        values: [studentHouseID, mealID]
    });
 
@@ -31,6 +31,15 @@ router.get('/studentenhuis/:shID/maaltijd/:maID/deelnemers', authController.vali
             res.status(200).json(rows);
         }
     })
+});
+
+router.post('/studentenhuis/:shID/maaltijd/:maID/deelnemers', authController.validateToken, (req, res, next) => {
+    let studentHouseID = reg.params.shID;
+    let mealID = req.params.maID;
+
+    let query = {
+        sql: "INSERT INTO maaltijd (Naam, Beschrijving, Ingredienten)"
+    }
 });
 
 module.exports = router;
