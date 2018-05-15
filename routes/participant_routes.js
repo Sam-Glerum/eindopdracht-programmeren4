@@ -34,12 +34,42 @@ router.get('/studentenhuis/:shID/maaltijd/:maID/deelnemers', authController.vali
 });
 
 router.post('/studentenhuis/:shID/maaltijd/:maID/deelnemers', authController.validateToken, (req, res, next) => {
-    let studentHouseID = reg.params.shID;
+    let studentHouseID = req.params.shID;
     let mealID = req.params.maID;
 
-    let query = {
-        sql: "INSERT INTO maaltijd (Naam, Beschrijving, Ingredienten)"
-    }
+    let token = req.token;
+    let payload = jwt.decode(token, config.secretkey);
+    let username = payload.sub;
+    let userID = 0;
+
+    let userIDQuery = {
+        sql: "SELECT ID from user where Email =?",
+        values: [username]
+    };
+
+    db.query(userIDQuery, (error, rows, fields) => {
+        if (error) {
+            res.status(400).json(error);
+        } else {
+            userID = rows[0].ID;
+            console.log("USERID: " + userID);
+            let query = {
+                sql: "INSERT INTO deelnemers (UserID, StudentenhuisID, MaaltijdID) VALUES (?, ?,?)",
+                values: [userID, studentHouseID, mealID]
+            };
+
+            db.query(query, (error, rows, fields) => {
+                if (error) {
+                    res.status(400).json(error);
+                } else {
+                    res.status(200).json(rows);
+                }
+
+            })
+        }
+    });
+
+
 });
 
 module.exports = router;
