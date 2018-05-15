@@ -98,6 +98,7 @@ router.post('/studentenhuis/:shId/maaltijd', authController.validateToken, (req,
 router.put('/studentenhuis/:shId/maaltijd/:maId', (req, res, next) => {
     res.contentType('application/json');
     let studentHouseId = req.params.shId;
+    let mealId = req.params.maId;
     let maaltijd = req.body;
     let token = req.token;
 
@@ -118,6 +119,22 @@ router.put('/studentenhuis/:shId/maaltijd/:maId', (req, res, next) => {
             console.log(userID);
         }
     });
+
+    let ownerOfMealQuery = {
+        sql: 'SELECT UserID FROM Maaltijd WHERE StudentenhuisID = ' + studentHouseId + ' AND ID = ' + mealId + ''
+    };
+
+    let ownerOfMealID = 0;
+
+    db.query(ownerOfMealQuery, (error, rows, fields) => {
+        if (error) {
+            res.status(400).json(error);
+        } else {
+            ownerOfMealID = rows[0].ID;
+            console.log(userID);
+        }
+    });
+
 });
 
 module.exports = router;
