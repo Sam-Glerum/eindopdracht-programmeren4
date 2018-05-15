@@ -44,8 +44,10 @@ router.get('/studentenhuis/:shId/maaltijd', (req, res, next) => {
         } else if (rows.length == 0) {
             res.status(404);
             res.json({
-                "msg": "Requested house id not found!"
-            })
+                "message": "Niet gevonden (huisId bestaat niet)",
+                "code": 404,
+                "datetime": moment()
+            });
         } else {
             res.status(200).json(rows);
         }
@@ -83,7 +85,17 @@ router.post('/studentenhuis/:shId/maaltijd', authController.validateToken, (req,
 
 
             db.query(query, (error, rows, fields) => {
-                if (error) {
+                if (typeof maaltijd.naam === "undefined" || typeof maaltijd.beschrijving === "undefined" ||
+                    typeof maaltijd.ingredienten === "undefined" || typeof maaltijd.allergie === "undefined" ||
+                    typeof maaltijd.prijs === "undefined") {
+                    res.status(412);
+                    res.json({
+                        "message": "Een of meer properties in de request body ontbreken of zijn foutief",
+                        "code": 412,
+                        "datetime": moment()
+                    });
+
+                } else if (error) {
                     res.status(400);
                     res.json(error);
                 } else {
@@ -161,9 +173,20 @@ router.put('/studentenhuis/:shId/maaltijd/:maId', authController.validateToken, 
                         console.log("Maaltijd PUT query: " + query.sql);
 
                         db.query(query, (error, rows, fields) => {
-                            if (error) {
+                            if (typeof maaltijd.naam === "undefined" || typeof maaltijd.beschrijving === "undefined" ||
+                                typeof maaltijd.ingredienten === "undefined" || typeof maaltijd.allergie === "undefined" ||
+                                typeof maaltijd.prijs === "undefined") {
+                                res.status(412);
+                                res.json({
+                                    "message": "Een of meer properties in de request body ontbreken of zijn foutief",
+                                    "code": 412,
+                                    "datetime": moment()
+                                });
+
+                            } else if (error) {
                                 res.status(400);
                                 res.json(error);
+
                             } else {
                                 res.status(200);
                                 console.log("PUT successful!");
