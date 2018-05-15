@@ -106,22 +106,68 @@ router.put('/studentenhuis/:ID', authController.validateToken, (req, res, next) 
     let studentHouse = req.body;
     let studentHouseID = req.params.ID;
 
+    let token = req.token;
+
+    let payload = jwt.decode(token, config.secretkey);
+    let username = payload.sub;
+
+
+    let userQuery = {
+        sql: 'SELECT ID FROM user WHERE Email = "' + username + '"'
+    };
+
+
     let query = {
         sql: "UPDATE studentenhuis SET Naam=?, adres=? WHERE ID=?",
         values: [studentHouse.naam, studentHouse.adres, studentHouseID]
+    };
+
+    let studenthouseIDquery = {
+        sql: 'SELECT * FROM studentenhuis WHERE ID =?',
+        values: [studentHouseID]
     };
 
     console.dir(studentHouse);
     console.log('Studenthouse query: ' + query.sql);
 
     res.contentType('application/json');
-    db.query(query, (error, rows, fields) => {
+
+    db.query(userQuery, (error, rows, fields) => {
         if (error) {
             res.status(400).json(error);
         } else {
-            res.status(200).json(rows);
+            userID = rows[0].ID;
+
+            db.query(query, (error, rows, fields) => {
+                if (error) {
+                    res.json(error);
+                } else if (typeof studentHouse.naam === "undefined" || typeof studentHouse.adres === "undefined") {
+                    res.status(412);
+                    res.json({
+                        "message": "Een of meer properties in de request body ontbreken of zijn foutief",
+                        "code": 412,
+                        "datetime": moment()
+                    })
+                } else {
+
+                    db.query(studenthouseIDquery, (error, rows, fields) => {
+                        if (error) {
+                            res.status(400).json(error);
+                        } else if (rows.length < 1) {
+                            res.status(404);
+                            res.json({
+                                "message": "Niet gevonden (huisID bestaat niet)",
+                                "code": 404,
+                                "datetime": moment()
+                            })
+                        } else {
+                            res.status(200).json(rows);
+                        }
+                    })
+                }
+            })
         }
-    })
+    });
 });
 
 router.delete('/studentenhuis/:ID', authController.validateToken, (req, res, next) => {
