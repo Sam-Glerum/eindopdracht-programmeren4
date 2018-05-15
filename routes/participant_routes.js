@@ -102,30 +102,46 @@ router.delete('/studentenhuis/:shID/maaltijd/:maID/deelnemers', authController.v
         sql: 'SELECT ID FROM user WHERE Email = "' + username + '"'
     };
 
+    let shIDmaIDquery = {
+        sql: 'SELECT ?, ? FROM deelnemers',
+        values: [studentHouseID, mealID]
+    };
+
     let userID = 0;
 
-    db.query(userQuery, (error, rows, fields) => {
+    db.query(shIDmaIDquery, (error, rows, fields) => {
         if (error) {
-            res.status(400).json(error);
+            console.log("CUNT");
+        } else if (rows.length < 1) {
+            console.log("testing")
         } else {
-            userID = rows[0].ID;
-            console.log(userID);
-
-            let query = {
-                sql: 'DELETE FROM deelnemers where UserID =?',
-                values: [userID],
-                timeout: 2000
-            };
-            console.log('Deelnemer DELETE query: ' + query.sql);
+            console.log("NAH CUNT")
 
 
-            db.query(query, (error, rows, fields) => {
+            db.query(userQuery, (error, rows, fields) => {
                 if (error) {
-                    res.status(400);
-                    res.json(error);
+                    res.status(400).json(error);
                 } else {
-                    res.status(200);
-                    res.json(rows);
+                    userID = rows[0].ID;
+
+                    let query = {
+                        sql: 'DELETE FROM deelnemers where UserID =?',
+                        values: [userID],
+                        timeout: 2000
+                    };
+                    console.log('Deelnemer DELETE query: ' + query.sql);
+
+
+                    db.query(query, (error, rows, fields) => {
+                        if (error) {
+                            res.status(400);
+                            console.log("URMUJM")
+                            res.json(error);
+                        } else {
+                            res.status(200);
+                            res.json({});
+                        }
+                    });
                 }
             });
         }
