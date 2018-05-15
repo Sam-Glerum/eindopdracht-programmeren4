@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const auth = require('../auth/authentication');
+const config = require('../config/config');
 const authController = require('../auth/auth_controller');
 const bodyparser = require('body-parser');
+const jwt = require('jwt-simple');
 
 router.use(bodyparser.urlencoded({
     extended: true
@@ -42,31 +44,45 @@ router.get('/studentenhuis/:ID', (req, res, next) => {
 });
 
 router.post('/studentenhuis', (req, res, next) => {
+    res.contentType('application/json');
     let studentenhuis = req.body;
     let token = req.token;
-    let user = req.id;
-    let query = {
-        sql: 'INSERT INTO studentenhuis (Naam, Adres, UserID) VALUES (?, ?, ?)',
-        values: [studentenhuis.naam, studentenhuis.adres, user],
-        timeout: 2000
-    };
-    console.log('Studenthuis query: ' + query.sql);
 
-    res.contentType('application/json');
-    db.query(query, (error, rows, fields) => {
+    let payload = jwt.decode(token, config.secretkey);
+    let username = payload.sub;
+
+    let userQuery = {
+        sql: 'SELECT ID FROM user WHERE Email = "' + username + '"'
+    };
+
+    let userID = 0;
+
+    db.query(userQuery, (error, rows, fields) => {
         if (error) {
-            res.status(400);
-            res.json(error);
+            console.log(error);
         } else {
-            res.status(200);
-            res.json(rows);
+            userID = rows[0].ID;
+            console.log(userID);
+
+            let query = {
+                sql: 'INSERT INTO studentenhuis (Naam, Adres, UserID) VALUES (?, ?, ?)',
+                values: [studentenhuis.naam, studentenhuis.adres, userID],
+                timeout: 2000
+            };
+            console.log('Studenthuis query: ' + query.sql);
+
+
+            db.query(query, (error, rows, fields) => {
+                if (error) {
+                    res.status(400);
+                    res.json(error);
+                } else {
+                    res.status(200);
+                    res.json(rows);
+                }
+            });
         }
     });
-});
-
-router.post('studentenhuis', (req, res) => {
-    res.status(200);
-    //Todo Logica
 });
 
 module.exports = router;
