@@ -33,7 +33,6 @@ router.post('/login', (req, res, next) => {
             });
 
         } else {
-<<<<<<< HEAD
             try {
                 userId = rows[0].ID;
                 userName = rows[0].Email;
@@ -48,7 +47,6 @@ router.post('/login', (req, res, next) => {
                 }
             } catch (e) {
                 console.log(e);
-=======
             userId = rows[0].ID;
             userName = rows[0].Email;
             userPW = rows[0].Password;
@@ -66,7 +64,6 @@ router.post('/login', (req, res, next) => {
                     "code": 412,
                     "datetime": moment()
                 });
->>>>>>> 80c46fc7fa875a93c1a99851ac0f7308ad994217
             }
         }
     });
