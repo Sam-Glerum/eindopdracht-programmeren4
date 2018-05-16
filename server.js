@@ -25,3 +25,5 @@ server.get('*', (req, res) => {
 server.listen(port, () => {
     console.log("Server is listening on port " + port);
 });
+
+module.exports = server;

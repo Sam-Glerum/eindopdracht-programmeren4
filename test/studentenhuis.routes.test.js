@@ -1,17 +1,32 @@
-const chai = require('chai')
-const chaiHttp = require('chai-http')
-const server = require('../server')
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const app = require('../server');
+const db = require('../config/db');
+const config = require('../config/config.json');
+const tokenFile = require('./authentication.routes.test');
 
-chai.should()
-chai.use(chaiHttp)
+let validToken = tokenFile;
+let amount;
 
-describe('Studentenhuis API POST', () => {
+chai.should();
+chai.use(chaiHttp);
+
+describe('Studentenhuis API POST', function () {
+    this.timeout(10000);
+
     it('should throw an error when using invalid JWT token', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
-    })
+        chai.request(app)
+            .post('/api/studentenhuis')
+            .set('Bearer', 'test')
+            .send({
+                "naam": "Studentenhuis",
+                "adres": "Studentweg 42069"
+            })
+            .end((err, res) => {
+                res.should.have.status(401);
+                done()
+            })
+    });
 
     it('should return a studentenhuis when posting a valid object', (done) => {
         //
