@@ -11,7 +11,6 @@ chai.use(chaiHttp);
 
 // After successful registration we have a valid token. We export this token
 // for usage in other testcases that require login.
-let validToken;
 
 describe('Registration', function () {
     this.timeout(5000);
@@ -29,10 +28,16 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.a('object');
+                let validToken = res.body.token;
+
 
                 db.query("DELETE FROM user WHERE Email = ?", ['test@test.com']);
                 done()
             });
+
+        module.exports = validToken;
+
+
     });
 
     it('should return an error on GET request', (done) => {
@@ -199,3 +204,4 @@ describe('Login', function () {
             })
     });
 });
+
