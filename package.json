@@ -2,9 +2,10 @@
   "name": "eindopdracht-programmeren4",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha --reporter spec --exit",
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,7 +18,8 @@
     "mocha": "^5.1.1",
     "moment": "^2.22.1",
     "mysql": "^2.15.0",
-    "nodemon": "^1.17.4"
+    "nodemon": "^1.17.4",
+    "regex-email": "^1.0.2"
   },
   "devDependencies": {
     "dotenv": "^5.0.1"

@@ -1,134 +1,197 @@
 /**
- * Testcases aimed at testing the authentication process. 
+ * Testcases aimed at testing the authentication process.
  */
-const chai = require('chai')
-const chaiHttp = require('chai-http')
-const server = require('../server')
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const app = require('../server');
+const db = require('../config/db');
 
-chai.should()
-chai.use(chaiHttp)
+chai.should();
+chai.use(chaiHttp);
 
 // After successful registration we have a valid token. We export this token
 // for usage in other testcases that require login.
-let validToken
+let validToken;
 
-describe('Registration', () => {
+describe('Registration', function () {
+    this.timeout(5000);
+
     it('should return a token when providing valid information', (done) => {
-        chai.request(server)
-            .post('api/register')
+        chai.request(app)
+            .post('/api/register')
+            .set('content-type', 'application/x-www-form-urlencoded')
             .send({
-                "firstname": "Firstname",
-                "lastname": "Lastname",
-                "email": "test@test.com",
-                "password": "testpassword"
+                "firstname": 'Firstname',
+                "lastname": 'Lastname',
+                "email": 'test@test.com',
+                "password": 'testtest123'
             })
-            .end((err, res => {
-                res.should.have.status(200)
-                res.body.should.be.a('object')
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('object');
 
-                const response = res.body
-                const firstname = response.firstname
-                firstname.equals('Firstname')
-                const lastname = response.lastname
-                lastname.equals('Lastname')
-                const email = response.email
-                email.equals('test@test.com')
-                const password = response.password
-                password.equals("testpassword")
-            })
-        //
-        // Hier schrijf je jouw testcase.
-        //
-
-        // Tip: deze test levert een token op. Dat token gebruik je in 
-        // andere testcases voor beveiligde routes door het hier te exporteren
-        // en in andere testcases te importeren via require.
-        // validToken = res.body.token
-        // module.exports = {
-        //     token: validToken
-        // }
-        done()
-    })
+                db.query("DELETE FROM user WHERE Email = ?", ['test@test.com']);
+                done()
+            });
+    });
 
     it('should return an error on GET request', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
-    })
+        chai.request(app)
+            .get('/api/register')
+            .end((err, res) => {
+                res.should.have.status(404);
+                done()
+            })
+    });
 
     it('should throw an error when the user already exists', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
-    })
+        chai.request(app)
+            .post('/api/register')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({
+                "firstname": "Jan",
+                "lastname": "Smit",
+                "email": "jsmit@server.nl",
+                "password": "secret"
+            })
+            .end((err, res) => {
+                res.should.have.status(409);
+                done()
+            });
+    });
 
     it('should throw an error when no firstname is provided', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
-    })
+        chai.request(app)
+            .post('/api/register')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({
+                "lastname": 'Lastname',
+                "email": 'test@test.com',
+                "password": 'testtest123'
+            })
+            .end((err, res) => {
+                res.should.have.status(412);
+                done()
+            })
+    });
 
     it('should throw an error when firstname is shorter than 2 chars', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
-    })
+        chai.request(app)
+            .post('/api/register')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({
+                "firstname": "F",
+                "lastname": "Lastname",
+                "email": "test@test.com",
+                "password": "testtest123"
+            })
+            .end((err, res) => {
+                res.should.have.status(412);
+                done()
+            })
+    });
 
     it('should throw an error when no lastname is provided', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
-    })
+        chai.request(app)
+            .post('/api/register')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({
+                "firstname": 'Firstname',
+                "email": 'test@test.com',
+                "password": 'testtest123'
+            })
+            .end((err, res) => {
+                res.should.have.status(412);
+                done()
+            })
+    });
 
     it('should throw an error when lastname is shorter than 2 chars', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
-    })
+        chai.request(app)
+            .post('/api/register')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({
+                "firstname": 'Firstname',
+                "lastname": 'L',
+                "email": 'test@test.com',
+                "password": 'testtest123'
+            })
+            .end((err, res) => {
+                res.should.have.status(412);
+                done()
+            })
+    });
 
     it('should throw an error when email is invalid', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
+        chai.request(app)
+            .post('/api/register')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({
+                "firstname": 'Firstname',
+                "lastname": 'Lastname',
+                "email": 'testtest',
+                "password": 'testtest123'
+            })
+            .end((err, res) => {
+                res.should.have.status(409);
+                done()
+            })
     })
+});
 
-})
-
-describe('Login', () => {
+describe('Login', function () {
+    this.timeout(10000);
 
     it('should return a token when providing valid information', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
-    })
+        chai.request(app)
+            .post('/api/login')
+            .send({
+                "email": "jsmit@server.nl",
+                "password": "secret"
+            })
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('object');
+                done()
+            })
+    });
 
     it('should throw an error when email does not exist', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
-    })
+        chai.request(app)
+            .post('/api/login')
+            .send({
+                "email": "test@avans.nl",
+                "password": "test123"
+            })
+            .end((err, res) => {
+                res.should.have.status(404);
+                done()
+            })
+    });
 
     it('should throw an error when email exists but password is invalid', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
-    })
+        chai.request(app)
+            .post('/api/login')
+            .send({
+                "email": "jsmit@server.nl",
+                "password": "test"
+            })
+            .end((err, res) => {
+                res.should.have.status(401);
+                done()
+            })
+    });
 
     it('should throw an error when using an invalid email', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
-    })
-
-})
+        chai.request(app)
+            .post('/api/login')
+            .send({
+                "email": "test",
+                "password": "test123"
+            })
+            .end((err, res) => {
+                res.should.have.status(409);
+                done()
+            })
+    });
+});
