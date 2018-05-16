@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../config/db');
 const auth = require('../auth/authentication');
 const bodyparser = require('body-parser');
+const moment = require('moment');
 
 router.use(bodyparser.urlencoded({
     extended: true
@@ -24,8 +25,13 @@ router.post('/login', (req, res, next) => {
 
     db.query(query, (error, rows, fields) => {
         if (error) {
-            res.status(400);
-            res.json(error);
+            res.status(412);
+            res.json({
+                "message": "Een of meer properties in de request body ontbreken of zijn foutief",
+                "code": 412,
+                "datetime": moment()
+            });
+
         } else {
             try {
                 userId = rows[0].ID;
@@ -37,6 +43,24 @@ router.post('/login', (req, res, next) => {
                         "token": auth.encodeToken(userName),
                         "username": userName,
                         "ID": userId
+                    });
+                }
+                userId = rows[0].ID;
+                userName = rows[0].Email;
+                userPW = rows[0].Password;
+                if (userName === loginParameters.email && userPW === loginParameters.password) {
+                    res.status(200);
+                    res.json({
+                        "token": auth.encodeToken(userName),
+                        "username": userName,
+                        "ID": userId
+                    });
+                } else {
+                    res.status(412);
+                    res.json({
+                        "message": "Een of meer properties in de request body ontbreken of zijn foutief",
+                        "code": 412,
+                        "datetime": moment()
                     });
                 }
             } catch (e) {
@@ -59,8 +83,12 @@ router.post('/register', (req, res, next) => {
     res.contentType('application/json');
     db.query(query, (error, rows, fields) => {
         if (error) {
-            res.status(400);
-            res.json(error);
+            res.status(412);
+            res.json({
+                "message": "Een of meer properties in de request body ontbreken of zijn foutief",
+                "code": 412,
+                "datetime": moment()
+            });
         } else {
             res.status(200);
             res.json(rows);
@@ -68,4 +96,4 @@ router.post('/register', (req, res, next) => {
     });
 });
 
-module.exports = router;
+module.exports = router
