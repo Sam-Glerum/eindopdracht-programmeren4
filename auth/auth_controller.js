@@ -37,12 +37,3 @@ let validateToken = (req, res, next) => {
 module.exports = {
     validateToken
 };
-
-
-
-/*
-{
-    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MjcxODk5NDYsImlhdCI6MTUyNjMyNTk0Niwic3ViIjoicGV0ZXJAcGFuamEuY29tIn0.5e1kpoinLAfxliAwvEZhmiGRzpB6HpJ5cmIo2u3OdPs",
-    "username": "peter@panja.com"
-}
-*/
