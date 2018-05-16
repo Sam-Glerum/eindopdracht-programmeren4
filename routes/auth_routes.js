@@ -27,16 +27,20 @@ router.post('/login', (req, res, next) => {
             res.status(400);
             res.json(error);
         } else {
-            userId = rows[0].ID;
-            userName = rows[0].Email;
-            userPW = rows[0].Password;
-            if (userName === loginParameters.email && userPW === loginParameters.password) {
-                res.status(200);
-                res.json({
-                    "token": auth.encodeToken(userName),
-                    "username": userName,
-                    "ID": userId
-                });
+            try {
+                userId = rows[0].ID;
+                userName = rows[0].Email;
+                userPW = rows[0].Password;
+                if (userName === loginParameters.email && userPW === loginParameters.password) {
+                    res.status(200);
+                    res.json({
+                        "token": auth.encodeToken(userName),
+                        "username": userName,
+                        "ID": userId
+                    });
+                }
+            } catch (e) {
+                console.log(e);
             }
         }
     });
