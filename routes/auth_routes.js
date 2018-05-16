@@ -68,6 +68,8 @@ router.post('/register', (req, res, next) => {
     res.contentType('application/json');
     db.query(query, (error, rows, fields) => {
         if (error) {
+            console.log("test");
+        } else if (rows.length < 1) {
             res.status(412);
             res.json({
                 "message": "Een of meer properties in de request body ontbreken of zijn foutief",
