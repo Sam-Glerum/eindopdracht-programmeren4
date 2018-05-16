@@ -25,35 +25,53 @@ router.post('/login', (req, res, next) => {
     };
 
     db.query(query, (error, rows, fields) => {
-        if (error) {
-            res.status(412);
-            res.json({
-                "message": "Een of meer properties in de request body ontbreken of zijn foutief",
-                "code": 412,
-                "datetime": moment()
-            });
-
-        } else {
-            userId = rows[0].ID;
-            userName = rows[0].Email;
-            userPW = rows[0].Password;
-            if (userName === loginParameters.email && userPW === loginParameters.password) {
-                res.status(200);
-                res.json({
-                    "token": auth.encodeToken(userName),
-                    "username": userName,
-                    "ID": userId
-                });
-            } else {
+            if (error) {
                 res.status(412);
                 res.json({
                     "message": "Een of meer properties in de request body ontbreken of zijn foutief",
                     "code": 412,
                     "datetime": moment()
                 });
+
+            } else if (regex.test(loginParameters.email) === false) {
+                res.status(409);
+                res.json({
+                    "message": "Ongeldig emailadres",
+                    "code": 409,
+                    "datetime": moment()
+                });
+
+            } else if (typeof rows[0] === 'undefined') {
+                res.status(404);
+                res.json({
+                    "message": "Een of meer properties in de request body ontbreken of zijn foutief",
+                    "code": 412,
+                    "datetime": moment()
+                });
+
+            } else {
+
+                userId = rows[0].ID;
+                userName = rows[0].Email;
+                userPW = rows[0].Password;
+                if (userName === loginParameters.email && userPW === loginParameters.password) {
+                    res.status(200);
+                    res.json({
+                        "token": auth.encodeToken(userName),
+                        "username": userName,
+                        "ID": userId
+                    });
+                } else {
+                    res.status(401);
+                    res.json({
+                        "message": "Wachtwoord is onjuist",
+                        "code": 412,
+                        "datetime": moment()
+                    });
+                }
             }
         }
-    });
+    );
 });
 
 //Registration endpoint

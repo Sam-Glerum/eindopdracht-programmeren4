@@ -145,6 +145,7 @@ describe('Login', function () {
     it('should return a token when providing valid information', (done) => {
         chai.request(app)
             .post('/api/login')
+            .set('content-type', 'application/x-www-form-urlencoded')
             .send({
                 "email": "jsmit@server.nl",
                 "password": "secret"
@@ -159,6 +160,7 @@ describe('Login', function () {
     it('should throw an error when email does not exist', (done) => {
         chai.request(app)
             .post('/api/login')
+            .set('content-type', 'application/x-www-form-urlencoded')
             .send({
                 "email": "test@avans.nl",
                 "password": "test123"
@@ -172,6 +174,7 @@ describe('Login', function () {
     it('should throw an error when email exists but password is invalid', (done) => {
         chai.request(app)
             .post('/api/login')
+            .set('content-type', 'application/x-www-form-urlencoded')
             .send({
                 "email": "jsmit@server.nl",
                 "password": "test"
@@ -185,6 +188,7 @@ describe('Login', function () {
     it('should throw an error when using an invalid email', (done) => {
         chai.request(app)
             .post('/api/login')
+            .set('content-type', 'application/x-www-form-urlencoded')
             .send({
                 "email": "test",
                 "password": "test123"
