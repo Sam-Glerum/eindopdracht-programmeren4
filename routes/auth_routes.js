@@ -33,38 +33,23 @@ router.post('/login', (req, res, next) => {
             });
 
         } else {
-            try {
-                userId = rows[0].ID;
-                userName = rows[0].Email;
-                userPW = rows[0].Password;
-                if (userName === loginParameters.email && userPW === loginParameters.password) {
-                    res.status(200);
-                    res.json({
-                        "token": auth.encodeToken(userName),
-                        "username": userName,
-                        "ID": userId
-                    });
-                }
-                userId = rows[0].ID;
-                userName = rows[0].Email;
-                userPW = rows[0].Password;
-                if (userName === loginParameters.email && userPW === loginParameters.password) {
-                    res.status(200);
-                    res.json({
-                        "token": auth.encodeToken(userName),
-                        "username": userName,
-                        "ID": userId
-                    });
-                } else {
-                    res.status(412);
-                    res.json({
-                        "message": "Een of meer properties in de request body ontbreken of zijn foutief",
-                        "code": 412,
-                        "datetime": moment()
-                    });
-                }
-            } catch (e) {
-                console.log(e);
+            userId = rows[0].ID;
+            userName = rows[0].Email;
+            userPW = rows[0].Password;
+            if (userName === loginParameters.email && userPW === loginParameters.password) {
+                res.status(200);
+                res.json({
+                    "token": auth.encodeToken(userName),
+                    "username": userName,
+                    "ID": userId
+                });
+            } else {
+                res.status(412);
+                res.json({
+                    "message": "Een of meer properties in de request body ontbreken of zijn foutief",
+                    "code": 412,
+                    "datetime": moment()
+                });
             }
         }
     });
@@ -96,4 +81,4 @@ router.post('/register', (req, res, next) => {
     });
 });
 
-module.exports = router
+module.exports = router;
