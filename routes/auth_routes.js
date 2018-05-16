@@ -76,7 +76,10 @@ router.post('/register', (req, res, next) => {
             });
         } else {
             res.status(200);
-            res.json(rows);
+            res.json({
+                "token": auth.encodeToken(user.email),
+                "email": user.email
+            });
         }
     });
 });
