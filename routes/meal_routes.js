@@ -138,7 +138,7 @@ router.put('/studentenhuis/:shId/maaltijd/:maId', authController.validateToken, 
 
 
         let ownerOfMealQuery = {
-            sql: 'SELECT UserID FROM Maaltijd WHERE StudentenhuisID = ' + studentHouseId + ' AND ID = ' + mealId + '',
+            sql: 'SELECT UserID FROM maaltijd WHERE StudentenhuisID = ' + studentHouseId + ' AND ID = ' + mealId + '',
         };
 
         console.log(ownerOfMealQuery.sql);
